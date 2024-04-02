@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant MMR Sonuçları</title>
+</head>
+<body>
+    <div id="result"></div>
+
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var nickname = urlParams.get('nickname');
+        var tag = urlParams.get('tag');
+        var apiUrl = "https://api.henrikdev.xyz/valorant/v1/mmr/eu/" + nickname + "/" + tag;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById("result");
+                if (data.error) {
+                    resultDiv.textContent = "Hata: " + data.error;
+                } else {
+                    var playerName = data.data.name;
+                    var playerTag = data.data.tag;
+                    var tier = data.data.currenttierpatched;
+                    var ranking = data.data.ranking_in_tier;
+                    resultDiv.innerHTML = playerName + " #" + playerTag + " oyuncusunun rekabetçi seviyesi " + tier + " - " + ranking + " RR";
+                }
+            })
+            .catch(error => console.error("Hata:", error));
+    </script>
+</body>
+</html>

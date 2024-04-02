@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant MMR Sorgulama Ekranı</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            display: flex;
+            flex-direction: column; /* Dikey yönde sırala */
+            align-items: center;
+        }
+
+        .back-button {
+    background-color: #ff4655;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.back-button:hover {
+    background-color: #d83542;
+    transform: translateY(-2px);
+}
+
+
+        .container {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px; /* Maksimum genişlik belirle */
+            margin: 20px; /* Kenar boşluğu ekle */
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #ddd;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-group label {
+            color: #ddd;
+            width: flex;
+            text-align: right;
+            margin-left: 5px;
+            margin-right: 10px;
+        }
+
+        .input-group input[type="text"] {
+            width: 150px;
+            padding: 8px;
+            border: 1px solid #777;
+            border-radius: 4px;
+            background-color: #555;
+            color: #ddd;
+        }
+
+        .input-group input[type="text"]:first-child {
+            margin-right: 20px;
+        }
+
+        button {
+            background-color: #ff4655;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px; /* Yeni eklenen stil */
+        }
+
+        button:hover {
+            background-color: #d83542;
+        }
+
+        .copy-button {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px; /* Yeni eklenen stil */
+        }
+
+        .copy-button:hover {
+            background-color: #005580;
+        }
+
+        .copied {
+            background-color: #4CAF50 !important; /* Yeşil renk */
+        }
+
+        .output-container {
+            margin-top: 20px;
+            display: none; /* Başlangıçta gizle */
+            width: flex;
+        }
+
+        .output-content {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            text-align: left; /* Sola dayalı olması için */
+            width: 100%; /* Container'ı tam genişlikte yap */
+            margin-top: 10px; /* Boşluk ekle */
+        }
+
+        .output-title {
+            color: #ddd;
+            font-weight: bold;
+            margin-bottom: 5px;
+            max-width: 200px; /* Başlık genişliğini ayarla */
+        }
+
+        .output-x {
+            font-size: 14px;
+            color: #bbb;
+            border: 1px solid #777;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #222;
+            overflow-wrap: break-word;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="goToHomePage()">Ana Sayfaya Dön</button>
+
+    <div class="container">
+        <h1>Valorant MMR Sorgulama</h1>
+        <div class="input-group">
+            <label for="nickname">Kullanıcı Adı:</label>
+            <input type="text" id="nickname">
+            <label for="tag">#</label>
+            <input type="text" id="tag">
+            <button onclick="showOutput()">Kodu Al</button>
+        </div>
+    </div>
+
+    <div class="output-container">
+        <div class="output-content">
+            <div class="output-title">Bağlantı</div>
+            <div class="output-x baglanti"></div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Kopyala</button>
+        </div>
+
+        <div class="output-content">
+            <div class="output-title">Nightbot</div>
+            <div class="output-x nightbot"></div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Kopyala</button>
+        </div>
+
+        <div class="output-content">
+            <div class="output-title">BotRix</div>
+            <div class="output-x botrix"></div>
+            <button class="copy-button" onclick="copyToClipboard(this)">Kopyala</button>
+        </div>
+    </div>
+
+    <script>
+        function goToHomePage() {
+    window.location.href = "index.html"; // Ana sayfanın URL'sini buraya ekleyin
+}
+
+
+        function editURL() {
+            var nickname = document.getElementById("nickname").value;
+            var tag = document.getElementById("tag").value;
+            var currentURL = window.location.href;
+            var editedURL = currentURL.substring(0, currentURL.lastIndexOf("/") + 1) + "result.html?nickname=" + nickname + "&tag=" + tag;
+
+
+            var editedURLDiv = document.querySelector(".baglanti");
+            editedURLDiv.innerHTML = "<code>" + editedURL + "</code>";
+
+            var editedURLDiv = document.querySelector(".nightbot");
+            editedURLDiv.innerHTML = "<code>$(urlfetch " + editedURL + ")</code>";
+
+            var botrixDiv = document.querySelector(".botrix");
+            botrixDiv.innerHTML = "<code>fetch[" + editedURL + "]</code>";
+        }
+
+        function copyToClipboard(button) {
+            var editedURLText = button.parentElement.querySelector(".output-x").innerText;
+            var tempTextArea = document.createElement("textarea");
+            tempTextArea.value = editedURLText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempTextArea);
+
+            button.classList.add("copied"); // Yeşil rengi uygula
+            button.textContent = "Kopyalandı!";
+            setTimeout(function() {
+                button.classList.remove("copied"); // Yeşil rengi kaldır
+                button.textContent = "Kopyala";
+            }, 5000);
+        }
+
+        function showOutput() {
+            var outputContainer = document.querySelector(".output-container");
+            outputContainer.style.display = "block"; // Görünür yap
+            editURL(); // Kodu al fonksiyonunu çalıştır
+        }
+    </script>
+</body>
+</html>
