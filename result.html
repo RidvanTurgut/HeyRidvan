@@ -6,29 +6,43 @@
     <title>Valorant MMR Sonuçları</title>
 </head>
 <body>
-    <div id="result"></div>
+    <div id="mmrInfo"></div>
 
     <script>
-        var urlParams = new URLSearchParams(window.location.search);
-        var nickname = urlParams.get('nickname');
-        var tag = urlParams.get('tag');
-        var apiUrl = "https://api.henrikdev.xyz/valorant/v1/mmr/eu/" + nickname + "/" + tag;
+        window.addEventListener('DOMContentLoaded', (event) => {
+            function fetchMMR(nickname, tag) {
+                fetch(`https://api.henrikdev.xyz/valorant/v1/mmr/eu/${nickname}/${tag}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            document.getElementById('mmrInfo').innerHTML = data.error;
+                        } else {
+                            const playerName = data.data.name;
+                            const playerTag = data.data.tag;
+                            const tier = data.data.currenttierpatched;
+                            const ranking = data.data.ranking_in_tier;
+                            document.getElementById('mmrInfo').innerHTML = `
+                                Oyuncu: ${playerName}#${playerTag} <br>
+                                Rekabetçi Seviye: ${tier} - ${ranking} RR
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                        document.getElementById('mmrInfo').innerHTML = 'Veri alınırken bir hata oluştu.';
+                    });
+            }
 
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                var resultDiv = document.getElementById("result");
-                if (data.error) {
-                    resultDiv.textContent = "Hata: " + data.error;
-                } else {
-                    var playerName = data.data.name;
-                    var playerTag = data.data.tag;
-                    var tier = data.data.currenttierpatched;
-                    var ranking = data.data.ranking_in_tier;
-                    resultDiv.innerHTML = playerName + " #" + playerTag + " oyuncusunun rekabetçi seviyesi " + tier + " - " + ranking + " RR";
-                }
-            })
-            .catch(error => console.error("Hata:", error));
+            const urlParams = new URLSearchParams(window.location.search);
+            const nickname = urlParams.get('nickname');
+            const tag = urlParams.get('tag');
+
+            if (nickname && tag) {
+                fetchMMR(nickname, tag);
+            } else {
+                document.getElementById('mmrInfo').innerHTML = 'Lütfen geçerli bir oyuncu adı ve etiket belirtin.';
+            }
+        });
     </script>
 </body>
-</html>
+</html
