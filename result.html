@@ -6,6 +6,12 @@
     <title>Valorant MMR Sonuçları</title>
 </head>
 <body>
+    <div id="result-container">
+        <h2>Valorant MMR Sonuçları</h2>
+        <div id="error-message" style="color: red;"></div>
+        <div id="result"></div>
+    </div>
+
     <script>
         var urlParams = new URLSearchParams(window.location.search);
         var nickname = urlParams.get('nickname');
@@ -25,24 +31,15 @@
                 var tier = data.data.currenttierpatched;
                 var ranking = data.data.ranking_in_tier;
                 
-                // İlgili verileri kısa bir formatta JSON olarak döndür
-                var resultJson = JSON.stringify({ playerName: playerName, playerTag: playerTag, tier: tier, ranking: ranking });
-                
-                // JSON verilerini bir dosyaya yaz
-                var blob = new Blob([resultJson], { type: 'application/json' });
-                var url = window.URL.createObjectURL(blob);
-                
-                // Dosyayı indirme bağlantısı oluştur
-                var downloadLink = document.createElement('a');
-                downloadLink.href = url;
-                downloadLink.download = 'valorant_mmr.json';
-                downloadLink.click();
+                // Sonuçları görüntüle
+                var resultContainer = document.getElementById("result");
+                resultContainer.innerHTML = "<p>Oyuncu Adı: " + playerName + "<br>Tag: " + playerTag + "<br>Tier: " + tier + "<br>Ranking: " + ranking + "</p>";
             })
             .catch(error => {
                 console.error("Hata:", error);
-                // Hata durumunda hata mesajını JSON formatında döndür
-                var errorJson = JSON.stringify({ error: error.message });
-                document.body.innerHTML = errorJson;
+                // Hata durumunda hata mesajını göster
+                var errorMessage = document.getElementById("error-message");
+                errorMessage.textContent = "Hata: " + error.message;
             });
     </script>
 </body>
