@@ -1,5 +1,10 @@
-<html>
-<head></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant MMR Sonuçları</title>
+</head>
 <body>
     <script>
         var urlParams = new URLSearchParams(window.location.search);
@@ -20,15 +25,38 @@
                 var tier = data.data.currenttierpatched;
                 var ranking = data.data.ranking_in_tier;
                 
-                // İlgili verileri kısa bir formatta JSON olarak döndür
-                var resultJson = JSON.stringify(playerName + "#" + playerTag + " : " + tier + " - " + ranking );
-                document.body.innerHTML = resultJson;
+                // İlgili verileri JSON olarak oluştur
+                var resultJson = JSON.stringify({
+                    playerName: playerName,
+                    playerTag: playerTag,
+                    tier: tier,
+                    ranking: ranking
+                });
+
+                // JSON yanıtını oluştur
+                var jsonResponse = new Response(resultJson, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                // Yanıtı göster
+                return jsonResponse;
+            })
+            .then(jsonResponse => {
+                // Yanıtı görüntüle
+                document.body.innerHTML = jsonResponse;
             })
             .catch(error => {
                 console.error("Hata:", error);
                 // Hata durumunda hata mesajını JSON formatında döndür
                 var errorJson = JSON.stringify({ error: error.message });
-                document.body.innerHTML = errorJson;
+
+                // Hata yanıtını oluştur
+                var errorResponse = new Response(errorJson, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                // Yanıtı göster
+                document.body.innerHTML = errorResponse;
             });
     </script>
 </body>
