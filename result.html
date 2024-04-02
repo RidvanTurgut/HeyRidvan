@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+<html>
+<head></head>
 <body>
     <script>
         var urlParams = new URLSearchParams(window.location.search);
@@ -23,10 +19,9 @@
                 var playerTag = data.data.tag;
                 var tier = data.data.currenttierpatched;
                 var ranking = data.data.ranking_in_tier;
-                var result = playerName + " #" + playerTag + " : " + tier + " - " + ranking + " RR";
                 
-                // JSON formatında sonucu döndür
-                var resultJson = JSON.stringify({ result: result });
+                // İlgili verileri kısa bir formatta JSON olarak döndür
+                var resultJson = JSON.stringify(playerName + "#" + playerTag + " : " + tier + " - " + ranking );
                 document.body.innerHTML = resultJson;
             })
             .catch(error => {
