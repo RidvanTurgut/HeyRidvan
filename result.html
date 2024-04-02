@@ -3,61 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valorant MMR Sonuçları</title>
+    <title>Valorant MMR</title>
 </head>
 <body>
+    <div id="result"></div>
+
     <script>
-        var urlParams = new URLSearchParams(window.location.search);
-        var nickname = urlParams.get('nickname');
-        var tag = urlParams.get('tag');
-        var apiUrl = "https://api.henrikdev.xyz/valorant/v1/mmr/eu/" + nickname + "/" + tag;
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nickname = urlParams.get('nickname');
+            const tag = urlParams.get('tag');
 
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('API çağrısı başarısız oldu: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                var playerName = data.data.name;
-                var playerTag = data.data.tag;
-                var tier = data.data.currenttierpatched;
-                var ranking = data.data.ranking_in_tier;
-                
-                // İlgili verileri JSON olarak oluştur
-                var resultJson = JSON.stringify({
-                    playerName: playerName,
-                    playerTag: playerTag,
-                    tier: tier,
-                    ranking: ranking
+            if (!nickname || !tag) {
+                showError("Nickname and tag parameters are required.");
+                return;
+            }
+
+            const apiUrl = `https://api.henrikdev.xyz/valorant/v1/mmr/eu/${nickname}/${tag}`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch API: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const playerName = data.data.name;
+                    const playerTag = data.data.tag;
+                    const tier = data.data.currenttierpatched;
+                    const ranking = data.data.ranking_in_tier;
+
+                    const result = `${playerName}#${playerTag} : ${tier} - ${ranking} RR`;
+                    document.getElementById('result').innerText = result;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showError(error.message);
                 });
+        });
 
-                // JSON yanıtını oluştur
-                var jsonResponse = new Response(resultJson, {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                // Yanıtı göster
-                return jsonResponse;
-            })
-            .then(jsonResponse => {
-                // Yanıtı görüntüle
-                document.body.innerHTML = jsonResponse;
-            })
-            .catch(error => {
-                console.error("Hata:", error);
-                // Hata durumunda hata mesajını JSON formatında döndür
-                var errorJson = JSON.stringify({ error: error.message });
-
-                // Hata yanıtını oluştur
-                var errorResponse = new Response(errorJson, {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                // Yanıtı göster
-                document.body.innerHTML = errorResponse;
-            });
+        function showError(message) {
+            const errorJson = JSON.stringify({ error: message });
+            document.getElementById('result').innerText = errorJson;
+        }
     </script>
 </body>
 </html>
