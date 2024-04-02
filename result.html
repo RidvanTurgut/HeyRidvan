@@ -6,8 +6,6 @@
     <title>Valorant MMR Sonuçları</title>
 </head>
 <body>
-    <div id="result"></div>
-
     <script>
         var urlParams = new URLSearchParams(window.location.search);
         var nickname = urlParams.get('nickname');
@@ -22,21 +20,17 @@
                 return response.json();
             })
             .then(data => {
-                var resultDiv = document.getElementById("result");
-                if (data.error) {
-                    resultDiv.textContent = "Hata: " + data.error;
-                } else {
-                    var playerName = data.data.name;
-                    var playerTag = data.data.tag;
-                    var tier = data.data.currenttierpatched;
-                    var ranking = data.data.ranking_in_tier;
-                    resultDiv.innerHTML = playerName + " #" + playerTag + " oyuncusunun rekabetçi seviyesi " + tier + " - " + ranking + " RR";
-                }
+                // Sonucu istenen formatta JSON olarak oluştur
+                var resultJson = JSON.stringify({
+                    result: `${data.data.name} #${data.data.tag} : ${data.data.currenttierpatched} - ${data.data.ranking_in_tier} RR`
+                });
+                document.body.innerHTML = resultJson;
             })
             .catch(error => {
                 console.error("Hata:", error);
-                var resultDiv = document.getElementById("result");
-                resultDiv.textContent = "API çağrısı sırasında bir hata oluştu: " + error.message;
+                // Hata durumunda hata mesajını JSON formatında döndür
+                var errorJson = JSON.stringify({ error: error.message });
+                document.body.innerHTML = errorJson;
             });
     </script>
 </body>
