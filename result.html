@@ -3,50 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valorant MMR</title>
+    <title>Valorant MMR Sonuçları</title>
 </head>
 <body>
-    <div id="result"></div>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const nickname = urlParams.get('nickname');
-            const tag = urlParams.get('tag');
+        var urlParams = new URLSearchParams(window.location.search);
+        var nickname = urlParams.get('nickname');
+        var tag = urlParams.get('tag');
+        var apiUrl = "https://api.henrikdev.xyz/valorant/v1/mmr/eu/" + nickname + "/" + tag;
 
-            if (!nickname || !tag) {
-                showError("Nickname and tag parameters are required.");
-                return;
-            }
-
-            const apiUrl = `https://api.henrikdev.xyz/valorant/v1/mmr/eu/${nickname}/${tag}`;
-
-            fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch API: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const playerName = data.data.name;
-                    const playerTag = data.data.tag;
-                    const tier = data.data.currenttierpatched;
-                    const ranking = data.data.ranking_in_tier;
-
-                    const result = `${playerName}#${playerTag} : ${tier} - ${ranking} RR`;
-                    document.getElementById('result').innerText = result;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    showError(error.message);
-                });
-        });
-
-        function showError(message) {
-            const errorJson = JSON.stringify({ error: message });
-            document.getElementById('result').innerText = errorJson;
-        }
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('API çağrısı başarısız oldu: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                var playerName = data.data.name;
+                var playerTag = data.data.tag;
+                var tier = data.data.currenttierpatched;
+                var ranking = data.data.ranking_in_tier;
+                
+                // İlgili verileri kısa bir formatta JSON olarak döndür
+                var resultJson = JSON.stringify({ playerName: playerName, playerTag: playerTag, tier: tier, ranking: ranking });
+                
+                // JSON verilerini bir dosyaya yaz
+                var blob = new Blob([resultJson], { type: 'application/json' });
+                var url = window.URL.createObjectURL(blob);
+                
+                // Dosyayı indirme bağlantısı oluştur
+                var downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = 'valorant_mmr.json';
+                downloadLink.click();
+            })
+            .catch(error => {
+                console.error("Hata:", error);
+                // Hata durumunda hata mesajını JSON formatında döndür
+                var errorJson = JSON.stringify({ error: error.message });
+                document.body.innerHTML = errorJson;
+            });
     </script>
 </body>
 </html>
