@@ -20,10 +20,14 @@
                 return response.json();
             })
             .then(data => {
-                // Sonucu istenen formatta JSON olarak oluştur
-                var resultJson = JSON.stringify({
-                    result: `${data.data.name} #${data.data.tag} : ${data.data.currenttierpatched} - ${data.data.ranking_in_tier} RR`
-                });
+                var playerName = data.data.name;
+                var playerTag = data.data.tag;
+                var tier = data.data.currenttierpatched;
+                var ranking = data.data.ranking_in_tier;
+                var result = playerName + " #" + playerTag + " : " + tier + " - " + ranking + " RR";
+                
+                // JSON formatında sonucu döndür
+                var resultJson = JSON.stringify({ result: result });
                 document.body.innerHTML = resultJson;
             })
             .catch(error => {
