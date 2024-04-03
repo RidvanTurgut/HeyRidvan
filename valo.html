@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant MMR Sorgulama Ekranı</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            display: flex;
+            flex-direction: column; /* Dikey yönde sırala */
+            align-items: center;
+        }
+
+        .back-button {
+            background-color: #ff4655;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #d83542;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 700px; /* Maksimum genişlik belirle */
+            margin: 20px; /* Kenar boşluğu ekle */
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #ddd;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-group label {
+            color: #ddd;
+            width: flex;
+            text-align: right;
+            margin-left: 5px;
+            margin-right: 10px;
+        }
+
+        .input-group input[type="text"],
+        .input-group select {
+            width: 120px;
+            padding: 8px;
+            border: 1px solid #777;
+            border-radius: 4px;
+            background-color: #555;
+            color: #ddd;
+        }
+
+        .input-group input[type="text"]:first-child {
+            margin-right: 20px;
+        }
+
+        button {
+            background-color: #ff4655;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 10px; /* Yeni eklenen stil */
+        }
+
+        button:hover {
+            background-color: #d83542;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="back-button" onclick="goToHomePage()">HeyRidvan</button>
+
+    <div class="container">
+        <h1>Valorant MMR Sorgulama</h1>
+        <div class="input-group">
+            <label for="region">Bölge:</label>
+            <select id="region">
+                <option value="eu">EU</option>
+                <option value="na">NA</option>
+                <option value="ap">AP</option>
+                <option value="kr">KR</option>
+                <option value="latam">LATAM</option>
+                <option value="br">BR</option>
+            </select>
+            <label for="nickname">Kullanıcı Adı:</label>
+            <input type="text" id="nickname">
+            <label for="tag">#</label>
+            <input type="text" id="tag">
+            <button onclick="showMMR()">Kodu Al</button>
+        </div>
+    </div>
+
+    <script>
+        function goToHomePage() {
+            window.location.href = "index.html"; // Ana sayfanın URL'sini buraya ekleyin
+        }
+
+        function showMMR() {
+            var region = document.getElementById("region").value;
+            var nickname = document.getElementById("nickname").value;
+            var tag = document.getElementById("tag").value;
+
+            var apiUrl = "https://api.henrikdev.xyz/valorant/v1/mmr/" + region + "/" + nickname + "/" + tag;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    var name = data.data.name;
+                    var tag = data.data.tag;
+                    var currentTierPatched = data.data.currenttierpatched;
+                    var rankingInTier = data.data.ranking_in_tier;
+
+                    var mmrInfo = name + " #" + tag + ": " + currentTierPatched + " - " + rankingInTier;
+
+                    window.open("vapi.html?mmrInfo=" + mmrInfo, "_blank");
+                    console.log(mmrInfo);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("API sorgusu başarısız oldu. Lütfen bilgileri kontrol edip tekrar deneyin.");
+                });
+        }
+    </script>
+</body>
+</html>
